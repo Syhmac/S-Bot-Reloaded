@@ -1,14 +1,12 @@
 # Local imports
 import modules.simple_logger as logger
 import modules.env as env
-
-# locales import
-import modules.locales.pl_PL as pl_PL
-import modules.locales.en_US as en_US
+import modules.utils as utils
 
 # 3-rd party imports
 import asyncio, os, nextcord
 from nextcord.ext import commands
+from nextcord import Interaction
 
 # Logger configuration
 log = logger.LOG(level = 0, filename = "latest.log", filepath = "logs/")
@@ -17,7 +15,7 @@ log = logger.LOG(level = 0, filename = "latest.log", filepath = "logs/")
 bot = commands.Bot(
     command_prefix = '!s',
     intents = nextcord.Intents.all(),
-    loop = asyncio.get_event_loop(),
+    loop = asyncio.new_event_loop(),
     case_insensitive = True,
     help_command = None
 )
@@ -41,9 +39,20 @@ async def on_member_remove(member):
     pass
 
 @bot.event
-async def on_command_error(ctx, error):
+async def on_application_command_error(interaction: Interaction, error: Exception):
     # Error handling
-    pass
+    original = getattr(error, "original", error)
+    locale = utils.resolveServerLocale(interaction)
+    if isinstance(original, nextcord.Forbidden):
+        await interaction.response.send_message(locale.errorForbidden)
+        return
+    if isinstance(original, commands.MissingPermissions):
+        await interaction.response.send_message(locale.errorNoPermission)
+        return
+
+    # Fallback for unexpected errors
+    await interaction.response.send_message(locale.errorUnexpected)
+    log.error(f"An error occurred while executing a command: {type(original)} | {error}")
 
 @bot.event
 async def on_message(message):
