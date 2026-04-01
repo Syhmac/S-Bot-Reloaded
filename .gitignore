@@ -1,3 +1,4 @@
 .idea/
 logs/
 modules/env.py
+start.sh
