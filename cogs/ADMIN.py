@@ -31,6 +31,7 @@ class ADMIN(commands.Cog, name='admin', description='Administrative commands'):
         description= en_US.kickCommandDescription,
         description_localizations={Loc.pl: pl_PL.kickCommandDescription},
         default_member_permissions=nextcord.permissions.Permissions(kick_members=True),
+        force_global=True
     )
     async def kick(self, interaction: Interaction,
         member: nextcord.Member = SlashOption(
@@ -63,7 +64,8 @@ class ADMIN(commands.Cog, name='admin', description='Administrative commands'):
         name_localizations={Loc.pl: pl_PL.banCommandName},
         description=en_US.banCommandDescription,
         description_localizations={Loc.pl: pl_PL.banCommandDescription},
-        default_member_permissions=nextcord.permissions.Permissions(ban_members=True)
+        default_member_permissions=nextcord.permissions.Permissions(ban_members=True),
+        force_global=True
     )
     async def ban(self, interaction: Interaction,
         member: nextcord.Member = SlashOption(
@@ -150,7 +152,8 @@ class ADMIN(commands.Cog, name='admin', description='Administrative commands'):
         name_localizations={Loc.pl: pl_PL.unbanCommandName},
         description=en_US.unbanCommandDescription,
         description_localizations={Loc.pl: pl_PL.unbanCommandDescription},
-        default_member_permissions=nextcord.permissions.Permissions(ban_members=True)
+        default_member_permissions=nextcord.permissions.Permissions(ban_members=True),
+        force_global=True
     )
     async def unban(self, interaction: Interaction,
     member: nextcord.Member = SlashOption(
@@ -170,7 +173,8 @@ class ADMIN(commands.Cog, name='admin', description='Administrative commands'):
         name_localizations={Loc.pl: pl_PL.timeoutCommandName},
         description=en_US.timeoutCommandDescription,
         description_localizations={Loc.pl: pl_PL.timeoutCommandDescription},
-        default_member_permissions=nextcord.permissions.Permissions(mute_members=True)
+        default_member_permissions=nextcord.permissions.Permissions(mute_members=True),
+        force_global=True
     )
     async def timeout(self, interaction: Interaction,
     member: nextcord.Member = SlashOption(

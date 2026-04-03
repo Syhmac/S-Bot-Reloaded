@@ -34,7 +34,8 @@ class ECON(commands.Cog, name='economy', description='Economy commands'):
         name = en_US.balanceCommandName,
         name_localizations={Loc.pl: pl_PL.balanceCommandName},
         description= en_US.balanceCommandDescription,
-        description_localizations={Loc.pl: pl_PL.balanceCommandDescription}
+        description_localizations={Loc.pl: pl_PL.balanceCommandDescription},
+        force_global=True,
     )
     async def balance(self, interaction: Interaction):
         locale = utils.resolveServerLocale(interaction)
@@ -56,7 +57,8 @@ class ECON(commands.Cog, name='economy', description='Economy commands'):
         name= en_US.jobCommandName,
         name_localizations={Loc.pl: pl_PL.jobCommandName},
         description= en_US.jobCommandDescription,
-        description_localizations={Loc.pl: pl_PL.jobCommandDescription}
+        description_localizations={Loc.pl: pl_PL.jobCommandDescription},
+        force_global=True,
     )
     @cooldowns.cooldown(1, 60, bucket=SlashBucket.author)
     async def job(self, interaction: Interaction):
