@@ -4,9 +4,10 @@ import modules.env as env
 import modules.utils as utils
 
 # 3-rd party imports
-import asyncio, os, nextcord
+import asyncio, os, nextcord, sqlite3
 from nextcord.ext import commands
 from nextcord import Interaction
+from cooldowns import CallableOnCooldown
 
 # Logger configuration
 log = logger.LOG(level = 0, filename = "latest.log", filepath = "logs/")
@@ -19,6 +20,23 @@ bot = commands.Bot(
     case_insensitive = True,
     help_command = None
 )
+
+# Make sure that database file exists and contains the necessary tables
+dbCon = sqlite3.connect('database.db')
+cursor = dbCon.cursor()
+cursor.execute('''CREATE TABLE IF NOT EXISTS economy (
+balance_id INTEGER PRIMARY KEY AUTOINCREMENT,
+user_id INTEGER NOT NULL,
+server_id INTEGER NOT NULL,
+balance INTEGER NOT NULL DEFAULT 0,
+jobs_done INTEGER NOT NULL DEFAULT 0,
+job_earn_mult REAL NOT NULL DEFAULT 1.0,
+gambling_wins INTEGER NOT NULL DEFAULT 0,
+gambling_losses INTEGER NOT NULL DEFAULT 0,
+fish_caught INTEGER NOT NULL DEFAULT 0,
+fish_sell_mult REAL NOT NULL DEFAULT 1.0,
+crimes_committed INTEGER NOT NULL DEFAULT 0)
+''')
 
 @bot.event
 async def on_ready():
@@ -48,6 +66,9 @@ async def on_application_command_error(interaction: Interaction, error: Exceptio
         return
     if isinstance(original, commands.MissingPermissions):
         await interaction.response.send_message(locale.errorNoPermission)
+        return
+    if isinstance(original, CallableOnCooldown):
+        await interaction.response.send_message(locale.errorCooldown.format(time = round(original.retry_after)))
         return
 
     # Fallback for unexpected errors

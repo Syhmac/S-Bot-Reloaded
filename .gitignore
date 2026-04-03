@@ -2,3 +2,4 @@
 logs/
 modules/env.py
 start.sh
+database.db
