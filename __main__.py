@@ -41,12 +41,16 @@ crimes_committed INTEGER NOT NULL DEFAULT 0)
 @bot.event
 async def on_ready():
     # Fires when bot connects to Discord and is ready to operate
-    log.info(f"Logged in as: {bot.user}")
+    log.info(f"Logged in as: {bot.user}. Bot is ready to operate.")
 
 @bot.event
 async def on_disconnect():
     # Fires when bot disconnects from Discord
-    log.warn("Lost connection to Discord.")
+    log.info("Lost connection to Discord.")
+
+async def on_resumed():
+    # Fires when bot resumes connection to Discord after a disconnect
+    log.info("Connection to Discord has been resumed.")
 
 @bot.event
 async def on_member_join(member):

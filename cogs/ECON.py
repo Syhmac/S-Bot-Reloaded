@@ -10,7 +10,6 @@ import modules.locales.pl_PL as pl_PL
 import modules.utils as utils
 
 import sqlite3, random, cooldowns
-import datetime as dt
 import nextcord
 from nextcord.ext import commands
 from nextcord import Interaction
@@ -54,7 +53,126 @@ class ECON(commands.Cog, name='economy', description='Economy commands'):
         await interaction.response.send_message(locale.balanceCommandResponse.format(balance=bal))
 
     @bot.slash_command(
-        name= en_US.jobCommandName,
+        name = en_US.balTopCommandName,
+        name_localizations={Loc.pl: pl_PL.balTopCommandName},
+        description= en_US.balTopCommandDescription,
+        description_localizations={Loc.pl: pl_PL.balTopCommandDescription},
+        force_global=True, #guild_ids=env.TEST_SERVER_ID
+    )
+    async def bal_top(self, interaction: Interaction):
+        locale = utils.resolveServerLocale(interaction)
+        # Connect to the database
+        dbCon = sqlite3.connect('database.db')
+        cursor = dbCon.cursor()
+        # Get top 10 users with the highest balance in the server
+        res = cursor.execute("SELECT user_id, balance FROM economy WHERE server_id = ? ORDER BY balance DESC LIMIT 10", (interaction.guild.id,))
+        top = res.fetchall()
+        if len(top) == 0:
+            await interaction.response.send_message(locale.balTopCommandNoData)
+            return
+
+        # Format the response message
+        embed = nextcord.Embed(
+            title=locale.balTopCommandEmbedTitle,
+            color=0xffcc00
+        )
+
+        ranking = ""
+        for i, (user_id, balance) in enumerate(top):
+            user = interaction.guild.get_member(user_id)
+            if user is not None:
+                ranking += "#{rank} - {user} - {balance}\n".format(rank = i+1, user = user.display_name, balance = balance)
+
+        embed.add_field(
+            name=locale.balTopCommandResponse,
+            value=ranking
+        )
+
+        await interaction.response.send_message(embed=embed)
+
+    @bot.slash_command(
+        name=en_US.balStatsCommandName,
+        name_localizations={Loc.pl: pl_PL.balStatsCommandName},
+        description= en_US.balStatsCommandDescription,
+        description_localizations={Loc.pl: pl_PL.balStatsCommandDescription},
+        force_global=True, #guild_ids=env.TEST_SERVER_ID
+    )
+    async def bal_stats(self, interaction: Interaction):
+        locale = utils.resolveServerLocale(interaction)
+        # Connect to the database
+        dbCon = sqlite3.connect('database.db')
+        cursor = dbCon.cursor()
+        # Get all user economy data
+        res = cursor.execute("SELECT balance, jobs_done, job_earn_mult, gambling_wins, gambling_losses, fish_caught, fish_sell_mult, crimes_committed FROM economy WHERE server_id = ? AND user_id = ?", (interaction.guild.id, interaction.user.id))
+        balance, jobs_done, job_earn_mult, gambling_wins, gambling_losses, fish_caught, fish_sell_mult, crimes_committed = res.fetchone()
+        if balance is None:
+            await interaction.response.send_message(locale.balStatsCommandNoData)
+            return
+
+        # Building the embed
+        embed = nextcord.Embed(
+            title=locale.balStatsEmbedTitle,
+            color=0xffcc00
+        )
+
+        embed.add_field(
+            name=locale.balStatsEmbedFiledBalanceName,
+            value=f'{balance} :coin:',
+            inline=True
+        )
+
+        embed.add_field(
+            name=locale.balStatsEmbedFiledJobsName,
+            value=jobs_done,
+            inline=True
+        )
+
+        embed.add_field(
+            name=locale.balStatsEmbedFiledJobMultName,
+            value=str(job_earn_mult) + "x",
+            inline=True
+        )
+
+        embed.add_field(name="", value="", inline=False) # Empty field as a line break
+
+        embed.add_field(
+            name=locale.balStatsEmbedFiledGamblingWinsName,
+            value=gambling_wins,
+            inline=True
+        )
+
+        embed.add_field(
+            name=locale.balStatsEmbedFiledGamblingLossesName,
+            value=gambling_losses,
+            inline=True
+        )
+
+        embed.add_field(name="", value="", inline=False) # Empty field as a line break
+
+        embed.add_field(
+            name=locale.balStatsEmbedFiledFishCaughtName,
+            value=fish_caught,
+            inline=True
+        )
+
+        embed.add_field(
+            name=locale.balStatsEmbedFiledFishMultName,
+            value=str(fish_sell_mult) + "x",
+            inline=True
+        )
+
+        embed.add_field(name="", value="", inline=False) # Empty field to make the distances equal between line breaks
+
+        embed.add_field(
+            name=locale.balStatsEmbedFieldCrimesName,
+            value=crimes_committed,
+            inline=False
+        )
+
+        await interaction.response.send_message(embed=embed)
+
+    @bot.slash_command(
+        name=en_US.jobCommandName,
         name_localizations={Loc.pl: pl_PL.jobCommandName},
         description= en_US.jobCommandDescription,
         description_localizations={Loc.pl: pl_PL.jobCommandDescription},
