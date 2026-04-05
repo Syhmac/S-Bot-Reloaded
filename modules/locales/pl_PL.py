@@ -112,6 +112,7 @@ kickCommandDescription = "Wyrzuca użytkownika z serwera"
 kickCommandMemberDescription = "Użytkownik do wyrzucenia"
 kickCommandReasonDescription = "Powód wyrzucenia użytkownika"
 kickCommandResponse = "{member} został/a wyrzucony z serwera. Powód: {reason}"
+kickCommandResponseNoReason = "{member} został/a wyrzucony z serwera."
 # ban
 banCommandName = "ban"
 banCommandDescription = "Wysyła użytkownika na banicję"

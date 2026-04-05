@@ -34,6 +34,7 @@ class ECON(commands.Cog, name='economy', description='Economy commands'):
         name_localizations={Loc.pl: pl_PL.balanceCommandName},
         description= en_US.balanceCommandDescription,
         description_localizations={Loc.pl: pl_PL.balanceCommandDescription},
+        integration_types=[0], contexts=[0],
         force_global=True,
     )
     async def balance(self, interaction: Interaction):
@@ -57,6 +58,7 @@ class ECON(commands.Cog, name='economy', description='Economy commands'):
         name_localizations={Loc.pl: pl_PL.balTopCommandName},
         description= en_US.balTopCommandDescription,
         description_localizations={Loc.pl: pl_PL.balTopCommandDescription},
+        integration_types=[0], contexts=[0],
         force_global=True, #guild_ids=env.TEST_SERVER_ID
     )
     async def bal_top(self, interaction: Interaction):
@@ -95,6 +97,7 @@ class ECON(commands.Cog, name='economy', description='Economy commands'):
         name_localizations={Loc.pl: pl_PL.balStatsCommandName},
         description= en_US.balStatsCommandDescription,
         description_localizations={Loc.pl: pl_PL.balStatsCommandDescription},
+        integration_types=[0], contexts=[0],
         force_global=True, #guild_ids=env.TEST_SERVER_ID
     )
     async def bal_stats(self, interaction: Interaction):
@@ -176,6 +179,7 @@ class ECON(commands.Cog, name='economy', description='Economy commands'):
         name_localizations={Loc.pl: pl_PL.jobCommandName},
         description= en_US.jobCommandDescription,
         description_localizations={Loc.pl: pl_PL.jobCommandDescription},
+        integration_types=[0], contexts=[0],
         force_global=True,
     )
     @cooldowns.cooldown(1, 60, bucket=SlashBucket.author)

@@ -26,7 +26,8 @@ class UTILS(commands.Cog, name='utility', description='Utility commands'):
         name = en_US.pingCommandName,
         name_localizations={Loc.pl: pl_PL.pingCommandName},
         description= en_US.pingCommandDescription,
-        description_localizations={Loc.pl: pl_PL.pingCommandDescription}
+        description_localizations={Loc.pl: pl_PL.pingCommandDescription},
+        contexts=[0, 1, 2],
     )
     async def ping(self, interaction: Interaction):
         locale = utils.resolveServerLocale(interaction)
