@@ -1,17 +1,23 @@
 ## -- Uniwersalne zwroty --
 genericMember = "użytkownik"
 genericReason = "powód"
+genericChoice = "wybór"
+genericAmount = "ilość"
 ## -- Komunikaty błędów --
 errorNoPermission = "Nie masz uprawnień do użycia tej komendy."
 errorForbidden = "Nie mam uprawnień do wykonania tej akcji."
 errorUnexpected = "Wystąpił nieoczekiwany błąd podczas wykonywania tej komendy."
 errorCooldown = "Nie możesz użyć tej komendy w tej chwili. Spróbuj ponownie za {time}s."
+errorInsufficientBalance = "Nie masz wystarczająco monet, aby wykonać tę akcję. Potrzebujesz {amount_needed} :coin:, a masz tylko {amount_got} :coin:."
 ## -- Komendy użytkowe --
 # ping
 pingCommandName = "ping"
 pingCommandDescription = "Sprawdza opóźnienie bota"
 pingCommandResponse = "Pong! Opóźnienie bota wynosi {latency} ms."
 ## -- Komendy ekonomii --
+# economy commons
+economyCommonWin = "Wygrałeś/aś!"
+economyCommonLoss = "Przegrałeś/aś!"
 # balance
 balanceCommandName = "balans"
 balanceCommandDescription = "Sprawdza twój aktualny balans"
@@ -105,6 +111,17 @@ jobList = {
     64: "Użytkownik `{user}` pracował jako ratownik na basenie i zarobił {earnings} :coin:.",
     65: "Użytkownik `{user}` pracował jako osobista pokojówka i zarobił {earnings} :coin:. Tak, musiał przez cały czas nosić strój pokojówki."
 }
+# coinflip
+coinflipCommandName = "coinflip"
+coinflipCommandDescription = "Pozwala postawić twoje monety na orła lub reszkę"
+coinflipCommandChoiceDescription = "Wybierz orła lub reszkę"
+coinflipCommandChoiceHeads = "Orzeł"
+coinflipCommandChoiceTails = "Reszka"
+coinflipCommandAmountDescription = "Ilość monet do obstawienia"
+coinflipCommandEmbedHeadsCorrect = "Postawiłeś/aś {amount} :coin: na orła i wygrałeś/aś!"
+coinflipCommandEmbedHeadsIncorrect = "Obstawiłeś/aś orła, a wyleciała reszka. Przegrałeś/aś {amount} :coin:."
+coinflipCommandEmbedTailsCorrect = "Reszka to był prawidłowy wybór! Wygrałeś/aś {amount} :coin:!"
+coinflipCommandEmbedTailsIncorrect = "Obstawiłeś/aś reszkę, ale wyleciał orzeł. Przegrałeś/aś {amount} :coin:."
 ## -- Komendy administracyjne --
 # kick
 kickCommandName = "wyrzuć"

@@ -1,17 +1,23 @@
 ## -- Generic terms --
 genericMember = "member"
 genericReason = "reason"
+genericChoice = "choice"
+genericAmount = "amount"
 ## -- Error messages --
 errorNoPermission = "You don't have permission to use this command."
 errorForbidden = "I don't have permission to perform this action."
 errorUnexpected = "An unexpected error occurred while executing the command."
 errorCooldown = "This command is on cooldown. Please try again in {time}s."
+errorInsufficientBalance = "You don't have enough coins to perform this action. You need {amount_needed} :coin:, but you only have {amount_got} :coin:."
 ## -- Utility commands --
 # ping
 pingCommandName = "ping"
 pingCommandDescription = "Check the bot's latency"
 pingCommandResponse = "Pong! Bot's latency is {latency} ms."
 ## -- Economy commands --
+# economy commons
+economyCommonWin = "You won!"
+economyCommonLoss = "You lost!"
 # balance
 balanceCommandName = "balance"
 balanceCommandDescription = "Check your current balance"
@@ -105,6 +111,17 @@ jobList = {
     64: "`{user}` worked as a pool lifeguard and earned {earnings} :coin: for it.",
     65: "`{user}` worked as a personal maid and earned {earnings} :coin: for it. Yes, they had to wear a maid outfit while doing it.",
 }
+# coinflip
+coinflipCommandName = "coinflip"
+coinflipCommandDescription = "Lets you bet your coins on heads or tails"
+coinflipCommandChoiceDescription = "Whether you choose heads or tails"
+coinflipCommandChoiceHeads = "Heads"
+coinflipCommandChoiceTails = "Tails"
+coinflipCommandAmountDescription = "Amount of coins to bet"
+coinflipCommandEmbedHeadsCorrect = "You successfully predicted heads and won {amount} :coin:!"
+coinflipCommandEmbedHeadsIncorrect = "You predicted heads, but it was tails. You lost {amount} :coin:."
+coinflipCommandEmbedTailsCorrect = "You've bet {amount} :coin: on tails and won!"
+coinflipCommandEmbedTailsIncorrect = "You thought it would be tails, but you should have aimed for heads. You lost {amount} :coin:."
 ## -- Administrative commands --
 # kick
 kickCommandName = "kick"

@@ -2,6 +2,7 @@
 import modules.simple_logger as logger
 import modules.env as env
 import modules.utils as utils
+import modules.errors as botErr
 
 # 3-rd party imports
 import asyncio, os, nextcord, sqlite3
@@ -65,18 +66,30 @@ async def on_application_command_error(interaction: Interaction, error: Exceptio
     # Error handling
     original = getattr(error, "original", error)
     locale = utils.resolveServerLocale(interaction)
+    errorMessage = ""
     if isinstance(original, nextcord.Forbidden):
-        await interaction.response.send_message(locale.errorForbidden)
-        return
-    if isinstance(original, commands.MissingPermissions):
-        await interaction.response.send_message(locale.errorNoPermission)
-        return
-    if isinstance(original, CallableOnCooldown):
-        await interaction.response.send_message(locale.errorCooldown.format(time = round(original.retry_after)))
-        return
+        errorMessage = locale.errorForbidden
+    elif isinstance(original, commands.MissingPermissions):
+        errorMessage = locale.errorNoPermission
+    elif isinstance(original, CallableOnCooldown):
+        errorMessage = locale.errorCooldown.format(time = round(original.retry_after))
+    elif isinstance(original, botErr.InsufficientBalance):
+        errorMessage = locale.errorInsufficientBalance.format(amount_needed = original.amount_needed, amount_got = original.amount_got)
+
+    # send the error Message if exists
+    if errorMessage != "":
+        if interaction.response.is_done():
+            await interaction.followup.send(errorMessage)
+            return
+        else:
+            await interaction.response.send_message(errorMessage)
+            return
 
     # Fallback for unexpected errors
-    await interaction.response.send_message(locale.errorUnexpected)
+    if interaction.response.is_done():
+        await interaction.followup.send(locale.errorUnexpected)
+    else:
+        await interaction.response.send_message(locale.errorUnexpected)
     log.error(f"An error occurred while executing a command: {type(original)} | {error}")
 
 @bot.event
