@@ -66,21 +66,30 @@ async def on_application_command_error(interaction: Interaction, error: Exceptio
     # Error handling
     original = getattr(error, "original", error)
     locale = utils.resolveServerLocale(interaction)
+    errorMessage = ""
     if isinstance(original, nextcord.Forbidden):
-        await interaction.response.send_message(locale.errorForbidden)
-        return
+        errorMessage = locale.errorForbidden
     if isinstance(original, commands.MissingPermissions):
-        await interaction.response.send_message(locale.errorNoPermission)
-        return
+        errorMessage = locale.errorNoPermission
     if isinstance(original, CallableOnCooldown):
-        await interaction.response.send_message(locale.errorCooldown.format(time = round(original.retry_after)))
-        return
+        errorMessage = locale.errorCooldown.format(time = round(original.retry_after))
     if isinstance(original, botErr.InsufficientBalance):
-        await interaction.response.send_message(locale.errorInsufficientBalance.format(amount_needed = original.amount_needed, amount_got = original.amount_got))
-        return
+        errorMessage = locale.errorInsufficientBalance.format(amount_needed = original.amount_needed, amount_got = original.amount_got)
+
+    # send the error Message if exists
+    if errorMessage != "":
+        if interaction.response.is_done():
+            await interaction.followup.channel.send(errorMessage)
+            return
+        else:
+            await interaction.response.send_message(errorMessage)
+            return
 
     # Fallback for unexpected errors
-    await interaction.response.send_message(locale.errorUnexpected)
+    if interaction.response.is_done():
+        await interaction.followup.channel.send(locale.errorUnexpected)
+    else:
+        await interaction.response.send_message(locale.errorUnexpected)
     log.error(f"An error occurred while executing a command: {type(original)} | {error}")
 
 @bot.event

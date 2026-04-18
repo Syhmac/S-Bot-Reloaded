@@ -121,7 +121,7 @@ coinflipCommandAmountDescription = "Amount of coins to bet"
 coinflipCommandEmbedHeadsCorrect = "You successfully predicted heads and won {amount} :coin:!"
 coinflipCommandEmbedHeadsIncorrect = "You predicted heads, but it was tails. You lost {amount} :coin:."
 coinflipCommandEmbedTailsCorrect = "You've bet {amount} :coin: on tails and won!"
-coinflipCommandEmbedTailsIncorrect = "You thought it will be tails, but you should have aimed for head. You lost {amount} :coin:."
+coinflipCommandEmbedTailsIncorrect = "You thought it would be tails, but you should have aimed for heads. You lost {amount} :coin:."
 ## -- Administrative commands --
 # kick
 kickCommandName = "kick"

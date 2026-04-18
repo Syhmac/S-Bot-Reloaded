@@ -52,6 +52,7 @@ class ECON(commands.Cog, name='economy', description='Economy commands'):
             bal = 0
         else:
             bal = bal[0]
+        dbCon.close()
         await interaction.response.send_message(locale.balanceCommandResponse.format(balance=bal))
 
     @bot.slash_command(
@@ -70,6 +71,7 @@ class ECON(commands.Cog, name='economy', description='Economy commands'):
         # Get top 10 users with the highest balance in the server
         res = cursor.execute("SELECT user_id, balance FROM economy WHERE server_id = ? ORDER BY balance DESC LIMIT 10", (interaction.guild.id,))
         top = res.fetchall()
+        dbCon.close()
         if len(top) == 0:
             await interaction.response.send_message(locale.balTopCommandNoData)
             return
@@ -109,6 +111,7 @@ class ECON(commands.Cog, name='economy', description='Economy commands'):
         # Get all user economy data
         res = cursor.execute("SELECT balance, jobs_done, job_earn_mult, gambling_wins, gambling_losses, fish_caught, fish_sell_mult, crimes_committed FROM economy WHERE server_id = ? AND user_id = ?", (interaction.guild.id, interaction.user.id))
         balance, jobs_done, job_earn_mult, gambling_wins, gambling_losses, fish_caught, fish_sell_mult, crimes_committed = res.fetchone()
+        dbCon.close()
         if balance is None:
             await interaction.response.send_message(locale.balStatsCommandNoData)
             return
@@ -209,6 +212,7 @@ class ECON(commands.Cog, name='economy', description='Economy commands'):
         new_bal = bal + earn + tip
         cursor.execute("UPDATE economy SET balance = ?, jobs_done = jobs_done + 1 WHERE user_id = ? AND server_id = ?", (new_bal, interaction.user.id, interaction.guild.id))
         dbCon.commit()
+        dbCon.close()
 
         # Send response
         await interaction.response.send_message(locale.jobList[key].format(user=interaction.user.display_name, earnings=earn, tips=tip))
@@ -223,14 +227,14 @@ class ECON(commands.Cog, name='economy', description='Economy commands'):
     )
     @cooldowns.cooldown(1, 60, bucket=SlashBucket.author)
     async def coinflip(self, interaction: Interaction,
-        choice: bool = SlashOption(
+        choice: int = SlashOption(
             name=en_US.genericChoice,
             name_localizations={Loc.pl: pl_PL.genericChoice},
             description=en_US.coinflipCommandChoiceDescription,
             description_localizations={Loc.pl: pl_PL.coinflipCommandChoiceDescription},
             choices={
-                "heads" : True,
-                "tails": False,
+                "heads" : 1,
+                "tails": 0,
             },
             choice_localizations={
                 "heads": {
@@ -243,16 +247,20 @@ class ECON(commands.Cog, name='economy', description='Economy commands'):
                     Loc.en_US: en_US.coinflipCommandChoiceTails,
                     Loc.pl: pl_PL.coinflipCommandChoiceTails,
                 }
-            }
+            },
+            required=True
         ),
         amount: int = SlashOption(
             name=en_US.genericAmount,
             name_localizations={Loc.pl: pl_PL.genericAmount},
-            description=en_US.genericAmount,
-            description_localizations={Loc.pl: pl_PL.genericAmount},
+            description=en_US.coinflipCommandAmountDescription,
+            description_localizations={Loc.pl: pl_PL.coinflipCommandAmountDescription},
+            required=True,
+            min_value=1,
         )
     ):
         locale = utils.resolveServerLocale(interaction)
+        choice = bool(choice)
         # Connect to the database
         dbCon = sqlite3.connect('database.db')
         cursor = dbCon.cursor()
@@ -264,12 +272,14 @@ class ECON(commands.Cog, name='economy', description='Economy commands'):
             cursor.execute("INSERT INTO economy (user_id, server_id) VALUES (?, ?)",
                            (interaction.user.id, interaction.guild.id))
             dbCon.commit()
+            dbCon.close()
             raise botErr.InsufficientBalance(amount, 0)
         else:
             bal = bal[0]
 
         # Check if user has enough coins
         if amount > bal:
+            dbCon.close()
             raise botErr.InsufficientBalance(amount, bal)
 
         # Pick randomly between heads and tails
@@ -303,6 +313,7 @@ class ECON(commands.Cog, name='economy', description='Economy commands'):
             cursor.execute("UPDATE economy SET balance = ?, gambling_losses = gambling_losses + 1 WHERE user_id = ? AND server_id = ?",
                            (new_bal, interaction.user.id, interaction.guild.id))
         dbCon.commit()
+        dbCon.close()
 
         # Create embed
         embed = nextcord.Embed(title=title, description=description, color=color)
