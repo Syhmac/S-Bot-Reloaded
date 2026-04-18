@@ -283,10 +283,10 @@ class ECON(commands.Cog, name='economy', description='Economy commands'):
             raise botErr.InsufficientBalance(amount, bal)
 
         # Pick randomly between heads and tails
-        coinResult = bool(random.randint(0, 1))
+        coin_result = bool(random.randint(0, 1))
 
         # Check if result is the same as user choice
-        if coinResult == choice: # win
+        if coin_result == choice: # win
             color = 0x00ff00
             title = locale.economyCommonWin
             if choice: # heads win

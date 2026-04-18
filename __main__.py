@@ -69,17 +69,17 @@ async def on_application_command_error(interaction: Interaction, error: Exceptio
     errorMessage = ""
     if isinstance(original, nextcord.Forbidden):
         errorMessage = locale.errorForbidden
-    if isinstance(original, commands.MissingPermissions):
+    elif isinstance(original, commands.MissingPermissions):
         errorMessage = locale.errorNoPermission
-    if isinstance(original, CallableOnCooldown):
+    elif isinstance(original, CallableOnCooldown):
         errorMessage = locale.errorCooldown.format(time = round(original.retry_after))
-    if isinstance(original, botErr.InsufficientBalance):
+    elif isinstance(original, botErr.InsufficientBalance):
         errorMessage = locale.errorInsufficientBalance.format(amount_needed = original.amount_needed, amount_got = original.amount_got)
 
     # send the error Message if exists
     if errorMessage != "":
         if interaction.response.is_done():
-            await interaction.followup.channel.send(errorMessage)
+            await interaction.followup.send(errorMessage)
             return
         else:
             await interaction.response.send_message(errorMessage)
@@ -87,7 +87,7 @@ async def on_application_command_error(interaction: Interaction, error: Exceptio
 
     # Fallback for unexpected errors
     if interaction.response.is_done():
-        await interaction.followup.channel.send(locale.errorUnexpected)
+        await interaction.followup.send(locale.errorUnexpected)
     else:
         await interaction.response.send_message(locale.errorUnexpected)
     log.error(f"An error occurred while executing a command: {type(original)} | {error}")
