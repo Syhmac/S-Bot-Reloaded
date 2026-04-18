@@ -2,6 +2,7 @@
 import modules.simple_logger as logger
 import modules.env as env
 import modules.utils as utils
+import modules.errors as botErr
 
 # 3-rd party imports
 import asyncio, os, nextcord, sqlite3
@@ -73,6 +74,9 @@ async def on_application_command_error(interaction: Interaction, error: Exceptio
         return
     if isinstance(original, CallableOnCooldown):
         await interaction.response.send_message(locale.errorCooldown.format(time = round(original.retry_after)))
+        return
+    if isinstance(original, botErr.InsufficientBalance):
+        await interaction.response.send_message(locale.errorInsufficientBalance.format(amount_needed = original.amount_needed, amount_got = original.amount_got))
         return
 
     # Fallback for unexpected errors
