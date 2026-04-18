@@ -1,6 +1,5 @@
 from __main__ import bot, log, botErr
 import modules.env as env
-import random
 
 # economy data
 from modules.economy.jobs import JOB_LIST
@@ -110,11 +109,12 @@ class ECON(commands.Cog, name='economy', description='Economy commands'):
         cursor = dbCon.cursor()
         # Get all user economy data
         res = cursor.execute("SELECT balance, jobs_done, job_earn_mult, gambling_wins, gambling_losses, fish_caught, fish_sell_mult, crimes_committed FROM economy WHERE server_id = ? AND user_id = ?", (interaction.guild.id, interaction.user.id))
-        balance, jobs_done, job_earn_mult, gambling_wins, gambling_losses, fish_caught, fish_sell_mult, crimes_committed = res.fetchone()
+        row = res.fetchone()
         dbCon.close()
-        if balance is None:
+        if row is None:
             await interaction.response.send_message(locale.balStatsCommandNoData)
             return
+        balance, jobs_done, job_earn_mult, gambling_wins, gambling_losses, fish_caught, fish_sell_mult, crimes_committed = row
 
         # Building the embed
         embed = nextcord.Embed(
